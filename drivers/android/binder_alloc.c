@@ -35,6 +35,9 @@
 #include "binder_alloc.h"
 #include "binder_trace.h"
 struct list_lru binder_alloc_lru;
+#if IS_ENABLED(CONFIG_MILLET)
+#include <linux/millet.h>
+#endif
 
 static DEFINE_MUTEX(binder_alloc_mmap_lock);
 
