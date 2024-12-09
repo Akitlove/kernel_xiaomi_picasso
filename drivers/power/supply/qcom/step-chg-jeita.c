@@ -389,6 +389,15 @@ static int get_step_chg_jeita_setting_from_profile(struct step_chg_info *chip)
 		chip->sw_jeita_cfg_valid = false;
 	}
 
+rc = of_property_read_u32_array(profile_node,
+			"qcom,step-jeita-hysteresis", hysteresis, 2);
+	if (!rc) {
+		chip->jeita_fcc_config->param.rise_hys = hysteresis[0];
+		chip->jeita_fcc_config->param.fall_hys = hysteresis[1];
+		pr_debug("jeita-fcc-hys: rise_hys=%u, fall_hys=%u\n",
+			hysteresis[0], hysteresis[1]);
+	}
+
 	rc = read_range_data_from_node(profile_node,
 			"qcom,jeita-fv-ranges",
 			chip->jeita_fv_config->fv_cfg,
