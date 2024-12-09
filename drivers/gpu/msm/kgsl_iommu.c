@@ -2546,6 +2546,13 @@ static int kgsl_iommu_get_gpuaddr(struct kgsl_pagetable *pagetable,
 	if (kgsl_memdesc_is_secured(memdesc))
 		start += secure_global_size;
 
+ret = get_gpuaddr(pagetable, memdesc, start, end, size, align);
+	/* if OoM, retry once after flushing mem_wq */
+	if (ret == -ENOMEM) {
+		flush_workqueue(kgsl_driver.mem_workqueue);
+		ret = get_gpuaddr(pagetable, memdesc, start, end, size, align);
+	}
+
 	spin_lock(&pagetable->lock);
 
 	addr = _get_unmapped_area(pagetable, start, end, size, align);
